@@ -17,7 +17,7 @@ export function downloadPDF() {
     if (pdfBlob) {
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(pdfBlob);
-        downloadLink.download = "invoice.pdf";
+        downloadLink.download = "jmdt-sales-invoice.pdf";
         downloadLink.click();
     } else {
         alert("No PDF generated yet. Please generate the invoice first.");

@@ -31,7 +31,7 @@ export function generatePDF() {
     doc.setFontSize(10);
     doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO-08", 105, 35, null, null, "center");
     doc.text(" MAIN ROAD SINGHESHWAR, NEAR STATE BANK, MADHEPURA-852128", 105, 40, null, null, "center");
-    doc.text("E-Mail : subhampratap98@gmail.com", 105, 45, null, null, "center");
+    doc.text("E-Mail : jmdt0051@gmail.com", 105, 45, null, null, "center");
     doc.text("Contact : 9631583115 / 9430453146", 105, 50, null, null, "center");
     doc.text("GSTIN/UIN: 10IZKPS3803Q1ZT", 105, 55, null, null, "center");
     doc.text("State Name : Bihar, Code : 10", 105, 60, null, null, "center");
@@ -123,7 +123,7 @@ export function generatePDF() {
     const totalAmount = products.reduce((sum, product) => sum + (product.quantity * product.rate), 0);
     const gstRate = parseFloat(getInputValue("gstRate"));
     const sellerState = "Bihar"; // Hardcode the seller's state
-    const isInterState = sellerState.toLowerCase() !== buyerState.toLowerCase(); // Case-insensitive comparison
+    const isInterState = sellerState.toLowerCase().trim() !== buyerState.toLowerCase().trim(); // Case-insensitive comparison
 
     let cgst = 0, sgst = 0, igst = 0;
     if (isInterState) {
