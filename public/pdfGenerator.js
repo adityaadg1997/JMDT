@@ -21,7 +21,7 @@ export function generatePDF() {
     doc.text("Shree Ganeshay Namah", 105, 17, null, null, "center"); // Shifted up by 5mm (from y=22 to y=17)
 
     // Add border to the page starting below the header
-    doc.rect(5, 20, 200, 262); // Start the border at y = 25 (below "Shree Ganeshay Namah")
+    doc.rect(5, 20, 200, 267); // Start the border at y = 25 (below "Shree Ganeshay Namah")
 
     // Continue with the rest of the content
     doc.setFontSize(14);
@@ -51,7 +51,12 @@ export function generatePDF() {
         doc.text(line, 15, 87 + index * 6);
     });
     doc.text("GSTIN/UIN: " + getInputValue("buyerGSTIN"), 15, 105);
-    doc.text("State Name : Bihar, Code : 10", 15, 111);
+
+    // Combine State Name and State Code into one line
+    const buyerState = getInputValue("buyerState");
+    const buyerStateCode = getInputValue("buyerStateCode");
+    doc.text(`State Name : ${buyerState}, Code : ${buyerStateCode}`, 15, 111);
+
     doc.text("Place of Supply: " + getInputValue("placeOfSupply"), 15, 117);
     doc.text("Contact person: " + getInputValue("contactPerson"), 15, 123);
     doc.text("Contact: " + getInputValue("contact"), 15, 129);
@@ -96,7 +101,7 @@ export function generatePDF() {
         headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontSize: 7, fontStyle: "bold" },
         columnStyles: {
             0: { cellWidth: 10 }, // Sl. No.
-            1: { cellWidth: 70 }, // Description of Goods (wider for long text)
+            1: { cellWidth: 80 }, // Description of Goods (wider for long text)
             2: { cellWidth: 20 }, // HSN/SAC
             3: { cellWidth: 15 }, // Quantity
             4: { cellWidth: 20 }, // Rate
@@ -117,8 +122,9 @@ export function generatePDF() {
 
     // Calculate total amount, taxes, and round off
     const totalAmount = products.reduce((sum, product) => sum + (product.quantity * product.rate), 0);
-    const cgst = (totalAmount * 0.09).toFixed(2);
-    const sgst = (totalAmount * 0.09).toFixed(2);
+    const gstRate = parseFloat(getInputValue("gstRate")); // Get GST rate from input (12% or 18%)
+    const cgst = (totalAmount * (gstRate / 2 / 100)).toFixed(2); // CGST is half of GST rate
+    const sgst = (totalAmount * (gstRate / 2 / 100)).toFixed(2); // SGST is half of GST rate
 
     // Dynamic Round Off Calculation
     const totalBeforeRoundOff = totalAmount + Number.parseFloat(cgst) + Number.parseFloat(sgst);
@@ -160,11 +166,11 @@ export function generatePDF() {
     const taxSummaryBody = products.map(product => [
         product.hsnSac,
         (product.quantity * product.rate).toFixed(2),
-        "9%",
-        (product.quantity * product.rate * 0.09).toFixed(2),
-        "9%",
-        (product.quantity * product.rate * 0.09).toFixed(2),
-        (product.quantity * product.rate * 0.18).toFixed(2),
+        `${gstRate / 2}%`,
+        (product.quantity * product.rate * (gstRate / 2 / 100)).toFixed(2),
+        `${gstRate / 2}%`,
+        (product.quantity * product.rate * (gstRate / 2 / 100)).toFixed(2),
+        (product.quantity * product.rate * (gstRate / 100)).toFixed(2),
     ]);
 
     taxSummaryBody.push([
@@ -238,22 +244,20 @@ export function generatePDF() {
     doc.text("Company's Bank Details", 115, taxY + 20);
     doc.setFontSize(6);
     doc.text("A/c Holder's Name:", 115, taxY + 25);
-    doc.text("JAY MATA DI TRADING", 160, taxY + 25);
+    doc.text("JAY MATA DI TRADING", 150, taxY + 25);
     doc.text("Bank Name:", 115, taxY + 29);
-    doc.text("Punjab National Bank_ Cash Credit Account", 160, taxY + 29);
+    doc.text("Punjab National Bank_ Current Account", 150, taxY + 29);
     doc.text("A/c No.:", 115, taxY + 33);
-    doc.text("1494008700016817", 160, taxY + 33);
+    doc.text("6403002100002325", 150, taxY + 33);
     doc.text("Branch & IFS Code:", 115, taxY + 37);
-    doc.text("Station Road, Ara & PUNB0149400", 160, taxY + 37);
+    doc.text("SINGHESHWARSTHAN, Madhepura & PUNB0640300", 150, taxY + 37);
 
     // Signature
     doc.setFontSize(8);
-    doc.text("for JAY MATA DI TRADING", 160, taxY + 45);
-    doc.text("Authorised Signatory", 160, taxY + 55);
+    doc.text("for JAY MATA DI TRADING", 160, taxY + 42);
+    doc.text("Authorised Signatory", 160, taxY + 46);
 
     // Footer
-    // doc.setFontSize(8);
-    // doc.text("SUBJECT TO PATNA JURISDICTION", 105, 285, null, null, "center");
     doc.setFontSize(6);
     doc.text("This is a Computer Generated Invoice", 105, 290, null, null, "center");
 
