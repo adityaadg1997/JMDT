@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
+    <script type="module" src="main.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Invoice Generator</h1>
+        <form id="invoiceForm">
+            <!-- Buyer Details -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buyerName">Buyer Name:</label>
+                    <input type="text" id="buyerName" placeholder="Customer/Firm Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="buyerGSTIN">Buyer GSTIN:</label>
+                    <input type="text" id="buyerGSTIN" placeholder="Customer GSTIN" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buyerAddress">Buyer Address:</label>
+                    <textarea id="buyerAddress" placeholder="Customer Complete Address" required></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="placeOfSupply">Place of Supply:</label>
+                    <input type="text" id="placeOfSupply" value="Bihar" required>
+                </div>
+                <div class="form-group">
+                    <label for="contactPerson">Contact Person:</label>
+                    <input type="text" id="contactPerson" placeholder="Customer Name" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="contact">Contact:</label>
+                    <input type="text" id="contact" placeholder="Customer Contact Number" required>
+                </div>
+                <div class="form-group">
+                    <label for="fax">Fax:</label>
+                    <input type="text" id="fax" placeholder="Customer Fax" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="invoiceNo">Invoice No:</label>
+                    <input type="text" id="invoiceNo" value="JMDT/2025/01" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" value="2025-01-13" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dispatchDocNo">Dispatch Doc No:</label>
+                    <input type="text" id="dispatchDocNo" placeholder="Document Number" required>
+                </div>
+                <div class="form-group">
+                    <label for="dispatchedThrough">Dispatched Through:</label>
+                    <input type="text" id="dispatchedThrough" placeholder="By Truck" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="destination">Destination:</label>
+                    <input type="text" id="destination" placeholder="Singheshwar" required>
+                </div>
+            </div>
+
+            <!-- Product Section -->
+            <div id="productSection">
+                <div class="form-row product-row">
+                    <div class="form-group">
+                        <label for="itemDescription">Item Description:</label>
+                        <input type="text" class="itemDescription" placeholder="Item Description" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" class="quantity" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rate">Rate:</label>
+                        <input type="number" class="rate" value="0.00" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hsnSac">HSN/SAC:</label>
+                        <input type="text" class="hsnSac" placeholder="HSN/SAC Code" required>
+                    </div>
+                    <button type="button" class="removeProduct">Remove</button>
+                </div>
+            </div>
+            <button type="button" id="addProduct">Add Product</button>
+
+            <!-- Hidden input to store products as JSON -->
+            <input type="hidden" id="products" name="products" />
+
+            <!-- Generate Invoice Button -->
+            <button type="button" id="generateInvoice">Generate and View Invoice</button>
+        </form>
+    </div>
+
+    <!-- PDF Viewer Section -->
+    <div id="pdf-viewer" class="pdf-viewer">
+        <canvas id="pdf-render"></canvas>
+        <button id="downloadButton" style="display: none;" onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <script>
+        // JavaScript to handle dynamic product addition and removal
+        document.getElementById('addProduct').addEventListener('click', () => {
+            const productSection = document.getElementById('productSection');
+            const newProductRow = document.querySelector('.product-row').cloneNode(true);
+            newProductRow.querySelectorAll('input').forEach(input => input.value = '');
+            productSection.appendChild(newProductRow);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('removeProduct')) {
+                e.target.closest('.product-row').remove();
+            }
+        });
+
+        // Function to collect product data and store it in the hidden input
+        function collectProducts() {
+            const products = [];
+            document.querySelectorAll('.product-row').forEach(row => {
+                const product = {
+                    description: row.querySelector('.itemDescription').value,
+                    quantity: parseFloat(row.querySelector('.quantity').value),
+                    rate: parseFloat(row.querySelector('.rate').value),
+                    hsnSac: row.querySelector('.hsnSac').value,
+                };
+                products.push(product);
+            });
+            document.getElementById('products').value = JSON.stringify(products);
+        }
+
+        // Update the generateAndViewPDF function to include product collection
+        document.getElementById('generateInvoice').addEventListener('click', () => {
+            collectProducts();
+            generateAndViewPDF();
+        });
+    </script>
+</body>
+</html>
