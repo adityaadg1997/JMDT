@@ -228,7 +228,7 @@ export function generatePDF() {
     // Company details
     doc.text("Company's PAN :", 15, taxY + 10);
     doc.setFont("helvetica", "bold");
-    doc.text("AHAPP9562H", 45, taxY + 10);
+    doc.text("IZKPS3803Q", 45, taxY + 10);
     doc.setFont("helvetica", "normal");
 
     // Declaration
