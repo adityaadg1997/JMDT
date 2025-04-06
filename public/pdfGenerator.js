@@ -68,7 +68,7 @@ export function generatePDF() {
     doc.rect(125, 65, 0, 75);
 
     // Invoice details
-    doc.text("Invoice No.", 130, 75);
+    doc.text(invoiceType+" No.", 130, 75);
     doc.text(getInputValue("invoiceNo"), 170, 75);
     doc.text("Delivery Note", 130, 81);
     doc.text("Mode/Terms of Payment", 130, 87);
@@ -253,7 +253,7 @@ export function generatePDF() {
     doc.setFontSize(8);
     doc.text("Declaration", 15, taxY + 20);
     doc.setFontSize(6);
-    doc.text("We declare that this invoice shows the actual price of the", 15, taxY + 25);
+    doc.text("We declare that this "+ invoiceType.toLowerCase() +" shows the actual price of the", 15, taxY + 25);
     doc.text("goods described and that all particulars are true and", 15, taxY + 29);
     doc.text("correct.", 15, taxY + 33);
 
