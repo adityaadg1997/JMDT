@@ -102,7 +102,7 @@ export function generatePDF() {
 
     // --- VERTICAL SEPARATOR LINE ---
     doc.setDrawColor(200, 200, 200); // Same gray color
-    doc.setLineWidth(0.1); // Same thin line
+    doc.setLineWidth(0.2); // Same thin line
     doc.line(120, 75, 120, 120); // Horizontal line positioned just above invoice info
 
     // --- INVOICE INFO ---
