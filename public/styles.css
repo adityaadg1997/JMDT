@@ -151,3 +151,13 @@ button:hover {
 #downloadButton:hover {
   background-color: #45a049; /* Darker green on hover */
 }
+
+#invoiceType, #gstRate {
+  padding: 8px 12px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+}

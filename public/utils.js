@@ -1,4 +1,5 @@
 // utils.js
+
 export function getInputValue(id) {
     const element = document.getElementById(id);
     return element ? element.value : "";
@@ -35,11 +36,9 @@ export function numberToWords(number) {
     const intValue = Number.parseInt(integerPart);
     if (intValue >= 100000) {
         result += convertLessThanOneThousand(Math.floor(intValue / 100000)) + " Lakh ";
-        number %= 100000;
     }
     if (intValue >= 1000) {
-        result += convertLessThanOneThousand(Math.floor(intValue / 1000)) + " Thousand ";
-        number %= 1000;
+        result += convertLessThanOneThousand(Math.floor((intValue % 100000) / 1000)) + " Thousand ";
     }
     result += convertLessThanOneThousand(intValue % 1000);
 
@@ -48,4 +47,25 @@ export function numberToWords(number) {
     }
 
     return result.trim();
+}
+
+// New Date Utility Functions
+
+export function getCurrentDate() {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+}
+
+export function formatDateToDDMMYYYY(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+}
+
+export function prettifyDate(isoDate) {
+    const date = new Date(isoDate);
+    const options = { day: "2-digit", month: "short", year: "numeric" };
+    return date.toLocaleDateString("en-IN", options);
 }
