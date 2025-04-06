@@ -1,5 +1,5 @@
 //pdfGenerator.js
-import { getInputValue, numberToWords } from './utils.js';
+import { getInputValue, numberToWords, formatDateToDDMMYYYY  } from './utils.js';
 
 let pdfBlob = null; // Store the PDF blob globally
 
@@ -11,13 +11,16 @@ export function generatePDF() {
         format: "a4",
     });
 
-    // Set font
-    doc.setFont("helvetica");
-
-    // Header // SELLER // SHOPKEEPER
+    // =======================
+    // HEADER + INVOICE TYPE
+    // =======================
+    const invoiceType = getInputValue("invoiceType") || "Invoice";
     doc.setFontSize(18);
-    doc.text("INVOICE", 105, 13, null, null, "center");
+    doc.setFont("helvetica", "normal");
+    doc.text(invoiceType.toUpperCase(), 105, 13, null, null, "center");
+
     doc.setFontSize(5);
+    doc.setFont("helvetica", "normal");
     doc.text("Shree Ganeshay Namah", 105, 17, null, null, "center");
 
     // Add border to the page starting below the header
@@ -71,7 +74,7 @@ export function generatePDF() {
     doc.text("Mode/Terms of Payment", 130, 87);
     doc.text("Buyer's Order No.", 130, 93);
     doc.text("Dated", 130, 99);
-    doc.text(getInputValue("date"), 170, 99);
+    doc.text(formatDateToDDMMYYYY(getInputValue("date")), 170, 99);
     doc.text("Dispatch Doc No.", 130, 105);
     doc.text(getInputValue("dispatchDocNo"), 170, 105);
     doc.text("Delivery Note Date", 130, 111);
@@ -274,7 +277,7 @@ export function generatePDF() {
 
     // Footer
     doc.setFontSize(6);
-    doc.text("This is a Computer Generated Invoice", 105, 290, null, null, "center");
+    doc.text("This is a Computer Generated " + invoiceType, 105, 290, null, null, "center");
 
     // Instead of saving, get the PDF as a blob
     pdfBlob = doc.output("blob"); // Store the blob globally
