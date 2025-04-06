@@ -1,6 +1,7 @@
 // eventHandlers.js
 import { generatePDF } from './pdfGenerator.js';
 import { renderPDF } from './pdfRenderer.js';
+import { getInputValue } from './utils.js';
 
 let pdfBlob = null;
 
@@ -17,7 +18,8 @@ export function downloadPDF() {
     if (pdfBlob) {
         const downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(pdfBlob);
-        downloadLink.download = "jmdt-sales-invoice.pdf";
+        const invoiceType = getInputValue("invoiceType") || "Invoice";
+        downloadLink.download = "jmdt-"+invoiceType+".pdf";
         downloadLink.click();
     } else {
         alert("No PDF generated yet. Please generate the invoice first.");
