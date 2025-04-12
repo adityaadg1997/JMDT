@@ -2,7 +2,8 @@
 import { getInputValue, numberToWords, formatDateToDDMMYYYY } from './utils.js';
 
 let pdfBlob = null;
-
+const logoJMDT = "\JMDT-Logo-Advanced.png";
+const signatureJMDT = "\JMDT-Digital-Signature-transparent.png";
 /**
  * Draws page borders with proper continuation handling
  * @param {object} doc - jsPDF document instance
@@ -63,6 +64,9 @@ export function generatePDF() {
 
     doc.setFontSize(5);
     doc.text("Shree Ganeshay Namah", 105, 17, null, null, "center");
+
+    // Add logo to top-left corner
+    doc.addImage(logoJMDT, "png", 10, 7, 40, 35); // (image, type, x, y, width, height)
 
     // --- COMPANY DETAILS ---
     doc.setFontSize(20);
@@ -327,6 +331,8 @@ export function generatePDF() {
  * @param {string} invoiceType - Type of invoice
  */
 function addSellerSignatureBlock(doc, yPosition, invoiceType) {
+    yPosition -=10;
+
     // Company PAN
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
@@ -344,20 +350,36 @@ function addSellerSignatureBlock(doc, yPosition, invoiceType) {
     doc.text("correct.", 15, yPosition + 33);
   
     // Company's Bank Details
+    yPosition -=10;
     doc.setFontSize(8);
-    doc.text("Company's Bank Details", 115, yPosition + 20);
-    doc.setFontSize(6);
-    doc.text("A/c Holder's Name:", 115, yPosition + 25);
-    doc.text("JAY MATA DI TRADING", 150, yPosition + 25);
-    doc.text("Bank Name:", 115, yPosition + 29);
-    doc.text("Punjab National Bank_ Current Account", 150, yPosition + 29);
-    doc.text("A/c No.:", 115, yPosition + 33);
-    doc.text("6403002100002325", 150, yPosition + 33);
-    doc.text("Branch & IFS Code:", 115, yPosition + 37);
-    doc.text("SINGHESHWARSTHAN, Madhepura & PUNB0640300", 150, yPosition + 37);
+    doc.text("Company's Bank Details", 100, yPosition + 20);
+    // doc.setFontSize(6);
+    doc.text("A/c Holder's Name:", 105, yPosition + 25);
+    doc.setFont("helvetica", "bold");
+    doc.text("JAY MATA DI TRADING", 135, yPosition + 25);
+    doc.setFont("helvetica", "normal");
+    doc.text("Bank Name:", 105, yPosition + 29);
+    doc.setFont("helvetica", "bold");
+    doc.text("Punjab National Bank_ Current Account", 135, yPosition + 29);
+    doc.setFont("helvetica", "normal");
+    doc.text("A/c No.:", 105, yPosition + 33);
+    doc.setFont("helvetica", "bold");
+    doc.text("6403002100002325", 135, yPosition + 33);
+    doc.setFont("helvetica", "normal");
+    doc.text("Branch:", 105, yPosition + 37);
+    doc.setFont("helvetica", "bold");
+    doc.text("SINGHESHWARSTHAN, Madhepura", 135, yPosition + 37);
+    doc.setFont("helvetica", "normal");
+
+    doc.text("IFS Code:", 105, yPosition + 41);
+    doc.setFont("helvetica", "bold");
+    doc.text("PUNB0640300", 135, yPosition + 41);
+    doc.setFont("helvetica", "normal");
   
     // Signature
-    doc.setFontSize(8);
-    doc.text("for JAY MATA DI TRADING", 160, yPosition + 47);
-    doc.text("Authorised Signatory", 160, yPosition + 51);
+    doc.setFontSize(7);
+    // Add logo to top-left corner
+    doc.addImage(signatureJMDT, "png", 161, yPosition + 36, 40, 30); // (image, type, x, y, width, height)
+    doc.text("for JAY MATA DI TRADING", 160, yPosition + 60);
+    doc.text("Authorised Signatory", 160, yPosition + 64);
 }
