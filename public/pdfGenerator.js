@@ -65,17 +65,30 @@ export function generatePDF() {
     doc.text("Shree Ganeshay Namah", 105, 17, null, null, "center");
 
     // --- COMPANY DETAILS ---
-    doc.setFontSize(14);
+    doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
     doc.text("JAY MATA DI TRADING", 105, 29, null, null, "center");
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO-08", 105, 35, null, null, "center");
-    doc.text(" MAIN ROAD SINGHESHWAR, NEAR STATE BANK, MADHEPURA-852128", 105, 40, null, null, "center");
-    doc.text("E-Mail : jmdt0051@gmail.com", 105, 45, null, null, "center");
-    doc.text("Contact : 9631583115 / 9430453146", 105, 50, null, null, "center");
-    doc.text("GSTIN/UIN: 10IZKPS3803Q1ZT", 105, 55, null, null, "center");
-    doc.text("State Name : Bihar, Code : 10", 105, 60, null, null, "center");
+
+    // Address lines (centered)
+    doc.setFont("Roboto", "normal");
+    doc.setFontSize(11);
+    doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO - 08", 105, 35, null, null, "center");
+    doc.text("MAIN ROAD SINGHESHWAR, NEAR STATE BANK, MADHEPURA - 852128", 111, 40, null, null, "center");
+
+    // Side-by-side details
+    const leftColX = 56;  // Left column X position
+    const rightColX = 117; // Right column X position
+    const startY = 45;     // Starting Y position
+
+    // Email (left) and Contact (right)
+    doc.text("E-Mail : jmdt0051@gmail.com", leftColX, startY);
+    doc.text("Contact : 9631583115 / 9430453146", rightColX, startY);
+
+    // GSTIN (left) and State Info (right)
+    doc.text("GSTIN/UIN: 10IZKPS3803Q1ZT", leftColX, startY + 5);
+    doc.text("State Name : Bihar, Code : 10", rightColX, startY + 5);
 
     // Company section border (complete rectangle)
     doc.rect(5, 5, 200, 60);
