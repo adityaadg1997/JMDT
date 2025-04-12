@@ -22,6 +22,10 @@ export function numberToWords(number) {
     ];
 
     function convertLessThanOneThousand(n) {
+    
+        if (isNaN(n)) return "";
+        n = Number(n); // ensure it's a number
+
         if (n < 10) return ones[n];
         if (n < 20) return teens[n - 10];
         if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? " " + ones[n % 10] : "");
@@ -34,16 +38,23 @@ export function numberToWords(number) {
     let result = "";
 
     const intValue = Number.parseInt(integerPart);
+    // Handle Lakh
     if (intValue >= 100000) {
         result += convertLessThanOneThousand(Math.floor(intValue / 100000)) + " Lakh ";
     }
+    // Handle Thousand
     if (intValue >= 1000) {
         result += convertLessThanOneThousand(Math.floor((intValue % 100000) / 1000)) + " Thousand ";
     }
+    // Handle Hundreds
     result += convertLessThanOneThousand(intValue % 1000);
 
+    // Handle Decimal (Paise)
     if (decimalPart) {
-        result += " and " + convertLessThanOneThousand(Number.parseInt(decimalPart)) + " Paise";
+        const decimalValue = Number.parseInt(decimalPart);
+        if (decimalValue > 0) {
+            result += " and " + convertLessThanOneThousand(decimalValue) + " Paise";
+        }
     }
 
     return result.trim();

@@ -170,19 +170,29 @@ export function generatePDF() {
 
     // --- TAX CALCULATION ---
     const totalAmount = products.reduce((sum, p) => sum + (p.quantity * p.rate), 0);
-    const gstRate = parseFloat(getInputValue("gstRate"));
     const sellerState = "Bihar";
     const isInterState = sellerState.toLowerCase() !== buyerState.toLowerCase();
-
+    
     let cgst = 0, sgst = 0, igst = 0;
-    if (isInterState) {
-        igst = (totalAmount * (gstRate / 100)).toFixed(2);
-    } else {
-        cgst = (totalAmount * (gstRate / 2 / 100)).toFixed(2);
-        sgst = (totalAmount * (gstRate / 2 / 100)).toFixed(2);
-    }
+    
+    // Calculate taxes PER PRODUCT
+    products.forEach(product => {
+        const amount = product.quantity * product.rate;
+        if (isInterState) {
+            igst += amount * (product.gstRate / 100);
+        } else {
+            cgst += amount * (product.gstRate / 200);
+            sgst += amount * (product.gstRate / 200);
+        }
+    });
 
-    const totalBeforeRoundOff = totalAmount + +cgst + +sgst + +igst;
+    // Format for display
+    const formattedIGST = igst.toFixed(2).toString();
+    const formattedCGST = cgst.toFixed(2).toString();
+    const formattedSGST = sgst.toFixed(2).toString();
+    
+    // Calculate final total with rounding
+    const totalBeforeRoundOff = totalAmount + cgst + sgst + igst;
     const roundedTotal = Math.round(totalBeforeRoundOff);
     const roundOff = (roundedTotal - totalBeforeRoundOff).toFixed(2);
     const total = roundedTotal.toFixed(2);
@@ -201,13 +211,13 @@ export function generatePDF() {
     doc.setFontSize(8);
     if (isInterState) {
         doc.text("IGST OUTPUT TAX", 15, finalY + 10);
-        doc.text(igst, 60, finalY + 10, { align: "right" });
+        doc.text(formattedIGST, 60, finalY + 10, { align: "right" });
     } else {
         doc.text("CGST OUTPUT TAX", 15, finalY + 10);
-        doc.text(cgst, 60, finalY + 10, { align: "right" });
-
+        doc.text(formattedCGST, 60, finalY + 10, { align: "right" });
+        
         doc.text("SGST OUTPUT TAX", 15, finalY + 16);
-        doc.text(sgst, 60, finalY + 16, { align: "right" });
+        doc.text(formattedSGST, 60, finalY + 16, { align: "right" });
     }
 
     doc.text("Round Off", 15, finalY + 22);
@@ -230,21 +240,22 @@ export function generatePDF() {
     const taxSummaryBody = products.map(p => [
         p.hsnSac,
         (p.quantity * p.rate).toFixed(2),
-        isInterState ? `${gstRate}%` : `${gstRate / 2}%`,
-        isInterState ? (p.quantity * p.rate * (gstRate / 100)).toFixed(2) : (p.quantity * p.rate * (gstRate / 2 / 100)).toFixed(2),
-        isInterState ? "" : `${gstRate / 2}%`,
-        isInterState ? "" : (p.quantity * p.rate * (gstRate / 2 / 100)).toFixed(2),
-        (p.quantity * p.rate * (gstRate / 100)).toFixed(2),
+        isInterState ? `${p.gstRate}%` : `${p.gstRate / 2}%`,
+        isInterState ? (p.quantity * p.rate * (p.gstRate / 100)).toFixed(2) : (p.quantity * p.rate * (p.gstRate / 2 / 100)).toFixed(2),
+        isInterState ? "" : `${p.gstRate / 2}%`,
+        isInterState ? "" : (p.quantity * p.rate * (p.gstRate / 2 / 100)).toFixed(2),
+        (p.quantity * p.rate * (p.gstRate / 100)).toFixed(2),
     ]);
-
+    
+    // Add total row
     taxSummaryBody.push([
         "Total",
         totalAmount.toFixed(2),
         "",
-        isInterState ? igst : cgst,
+        isInterState ? igst.toFixed(2) : cgst.toFixed(2),
         "",
-        isInterState ? "" : sgst,
-        (+cgst + +sgst + +igst).toFixed(2),
+        isInterState ? "" : sgst.toFixed(2),
+        (Number(igst) + Number(cgst) + Number(sgst)).toFixed(2)
     ]);
 
     doc.autoTable({

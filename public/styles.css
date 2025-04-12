@@ -152,7 +152,7 @@ button:hover {
   background-color: #45a049; /* Darker green on hover */
 }
 
-#invoiceType, #gstRate {
+#invoiceType, #gst {
   padding: 8px 12px;
   margin-bottom: 1rem;
   font-size: 14px;
