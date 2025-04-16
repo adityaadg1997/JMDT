@@ -69,7 +69,7 @@ export function generatePDF() {
     // doc.addImage(logoJMDT, "png", 10, 7, 40, 35); // (image, type, x, y, width, height)
 
     // --- COMPANY DETAILS ---
-    doc.setFontSize(20);
+    doc.setFontSize(21);
     doc.setFont("helvetica", "bold");
     doc.text("JAY MATA DI TRADING", 105, 29, null, null, "center");
     doc.setFont("helvetica", "normal");
@@ -79,12 +79,12 @@ export function generatePDF() {
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
     // doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO - 08", 105, 35, null, null, "center");
-    doc.text("MAIN ROAD SINGHESHWAR, NEAR STATE BANK, MADHEPURA - 852128", 111, 40, null, null, "center");
+    doc.text("MAIN ROAD NEAR STATE BANK SINGHESHWAR, MADHEPURA - 852128", 109, 36, null, null, "center");
 
     // Side-by-side details
     const leftColX = 56;  // Left column X position
     const rightColX = 117; // Right column X position
-    const startY = 45;     // Starting Y position
+    const startY = 43;     // Starting Y position
 
     // Email (left) and Contact (right)
     doc.text("E-Mail : jmdt0051@gmail.com", leftColX, startY);
