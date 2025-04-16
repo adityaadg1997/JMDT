@@ -66,7 +66,7 @@ export function generatePDF() {
     doc.text("Shree Ganeshay Namah", 105, 17, null, null, "center");
 
     // Add logo to top-left corner
-    doc.addImage(logoJMDT, "png", 10, 7, 40, 35); // (image, type, x, y, width, height)
+    // doc.addImage(logoJMDT, "png", 10, 7, 40, 35); // (image, type, x, y, width, height)
 
     // --- COMPANY DETAILS ---
     doc.setFontSize(20);
@@ -78,7 +78,7 @@ export function generatePDF() {
     // Address lines (centered)
     doc.setFont("Roboto", "normal");
     doc.setFontSize(11);
-    doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO - 08", 105, 35, null, null, "center");
+    // doc.text("S/O- BIPIN KUMAR SINGH, RAMPATTY, WARD NO - 08", 105, 35, null, null, "center");
     doc.text("MAIN ROAD SINGHESHWAR, NEAR STATE BANK, MADHEPURA - 852128", 111, 40, null, null, "center");
 
     // Side-by-side details
@@ -348,6 +348,10 @@ function addSellerSignatureBlock(doc, yPosition, invoiceType) {
     doc.text("We declare that this " + invoiceType.toLowerCase() + " shows the actual price of the", 15, yPosition + 25);
     doc.text("goods described and that all particulars are true and", 15, yPosition + 29);
     doc.text("correct.", 15, yPosition + 33);
+    if (invoiceType.toLowerCase() === "quotation") {
+        doc.text("Note: This " + invoiceType.toLowerCase() + " is only valid for 30 days", 15, yPosition + 37);
+      }
+      
   
     // Company's Bank Details
     yPosition -=10;
